@@ -27,6 +27,29 @@ function ProfileSidebar(propriedades) {
     </Box>
   )
 }
+
+function ProfileRelationsBox(propriedades) {
+  return (
+    <ProfileRelationsBoxWrapper>
+      <h2 className="smallTitle">
+        {propriedades.title} ({propriedades.items.length})
+      </h2>
+      <ul>
+        {propriedades.items.map((itemAtual) => {
+          return (
+            <li key={itemAtual.id}>
+              <a target="_blank" href={`https://github.com/${itemAtual.login}`}>
+                <img src={itemAtual.avatar_url} />
+                <span>{itemAtual.login}</span>
+              </a>
+            </li>
+          )
+        })}
+      </ul>
+    </ProfileRelationsBoxWrapper>
+  )
+}
+
 export default function Home() {
   const [comunidades, setComunidades] = React.useState([]);
 const githubUser = 'MuriloBarreto';
@@ -40,9 +63,22 @@ const pessoasFavorites = [
     'felipefialho'
 ]
 
+const [seguidores, setSeguidores] = React.useState([]);
+
+React.useEffect(() => {
+  fetch('https://api.github.com/users/MuriloBarreto/followers')
+  .then((respostaDoServidor) => {
+    return respostaDoServidor.json();
+  })
+  .then((Resposta) => {
+    setSeguidores(Resposta);
+  })
+})
+
+
   return (
     <div>
-    <AlurakutMenu />
+    <AlurakutMenu githubUser={githubUser} />
     <MainGrid >
       <div className="profileArea" style={{gridarea: 'profileArea'}}>
         <ProfileSidebar githubUser={githubUser} />
@@ -66,6 +102,7 @@ const pessoasFavorites = [
               id: new Date().toISOString,
               title: dadosDoForm.get('title'),
               image: dadosDoForm.get('image'),
+              comunity: dadosDoForm.get('comunity'),
             }
 
             // comunidades.push('Alura');
@@ -86,6 +123,13 @@ const pessoasFavorites = [
               arial-label="Coloque uma URL para usarmos de capa"
                />
             </div>
+            <div>
+            <input  
+              placeholder="Coloque o link da comunidade aqui" 
+              name="comunity" 
+              arial-label="Coloque o link da comunidade aqui"
+               />
+            </div>
 
             <button >
               Criar comunidade
@@ -94,6 +138,7 @@ const pessoasFavorites = [
         </Box>
       </div>
       <div className="profileRelationsArea" style={{gridarea: 'profileRelationsArea'}}>
+      <ProfileRelationsBox title="Seguidores" items={seguidores} />
         <ProfileRelationsBoxWrapper>
         <h2 className="smallTitle">
              comunidades ({comunidades.length})
@@ -103,7 +148,7 @@ const pessoasFavorites = [
           {comunidades.map((itemAtual) => {
             return (
               <li key={itemAtual.id}>
-              <a href={`/users/${itemAtual.title}`}>
+              <a target='_blank'  href={itemAtual.comunity}>
                 <img src={itemAtual.image} />
                 <span>{itemAtual.title}</span>
               </a>
@@ -121,7 +166,7 @@ const pessoasFavorites = [
           {pessoasFavorites.map((itemAtual) => {
             return (
               <li  key={itemAtual}>
-              <a href={`/users/${itemAtual}`}>
+              <a href={`#`} >
                 <img src={`https://github.com/${itemAtual}.png`} />
                 <span>{itemAtual}</span>
               </a>
