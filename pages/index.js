@@ -73,7 +73,32 @@ React.useEffect(() => {
   .then((Resposta) => {
     setSeguidores(Resposta);
   })
-})
+
+
+  fetch('https://graphql.datocms.com/', {
+    method: 'POST',
+    headers: {
+      'Authorization': 'ec578736dc67d92d8bdeaf68599c8a',
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify({"query": `query {
+      allCommunities {
+        title
+        id
+        imageUrl
+        url
+        creatorSlug
+      }
+    }`})
+  })
+  .then((response) => response.json())
+  .then((res) => {
+    const comunidades = res.data.allCommunities
+    console.log(comunidades);
+    setComunidades(comunidades);
+  })
+}, [])
 
 
   return (
@@ -99,15 +124,27 @@ React.useEffect(() => {
             const dadosDoForm = new FormData(e.target);
 
             const comunidade = {
-              id: new Date().toISOString,
               title: dadosDoForm.get('title'),
-              image: dadosDoForm.get('image'),
-              comunity: dadosDoForm.get('comunity'),
+              image_url: dadosDoForm.get('image'),
+              url: dadosDoForm.get('comunity'),
+              creator_slug: githubUser,
             }
 
-            // comunidades.push('Alura');
-            const comunidadesAtualizadas = [...comunidades, comunidade]
-            setComunidades(comunidadesAtualizadas);
+            fetch('/api/comunidades', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(comunidade),
+            })
+            .then(async (response) => {
+              const dados = await response.json();
+              const comunidade = dados.registroCriado;
+              const comunidadesAtualizadas = [...comunidades, comunidade]
+              setComunidades(comunidadesAtualizadas);
+            })
+            
+           
           }}>
             <div>
               <input  
@@ -148,8 +185,8 @@ React.useEffect(() => {
           {comunidades.map((itemAtual) => {
             return (
               <li key={itemAtual.id}>
-              <a target='_blank'  href={itemAtual.comunity}>
-                <img src={itemAtual.image} />
+              <a target='_blank'  href={itemAtual.url}>
+                <img src={itemAtual.imageUrl} />
                 <span>{itemAtual.title}</span>
               </a>
             </li>
