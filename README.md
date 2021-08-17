@@ -16,6 +16,7 @@ Um projeto feito na Imersão React da Alura.
 
    - Inicie o projeto: 
    $ npm run start
+   
   ```
 
   * [Link do projeto](https://alurakut-murilobarreto.vercel.app/)
