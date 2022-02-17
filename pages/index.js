@@ -37,7 +37,7 @@ function ProfileRelationsBox(propriedades) {
         {propriedades.title} ({propriedades.items.length})
       </h2>
       <ul>
-        {propriedades.items.map((itemAtual) => {
+        {propriedades.items.slice(0, propriedades.limit).map((itemAtual) => {
           return (
             <li key={itemAtual.id}>
               <a target="_blank" href={`https://github.com/${itemAtual.login}`}>
@@ -177,7 +177,7 @@ React.useEffect(() => {
         </Box>
       </div>
       <div className="profileRelationsArea" style={{gridarea: 'profileRelationsArea'}}>
-      <ProfileRelationsBox title="Seguidores" items={seguidores} />
+      <ProfileRelationsBox title="Seguidores" items={seguidores} limit={6}/>
         <ProfileRelationsBoxWrapper>
         <h2 className="smallTitle">
              comunidades ({comunidades.length})
